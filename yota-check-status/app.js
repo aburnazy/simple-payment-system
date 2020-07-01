@@ -1,8 +1,8 @@
 const express = require('express');
 const logger = require('morgan');
-const { pick } = require('lodash');
 const connectionPool = require('./data/connectionpool');
 const indexRouter = require('./routes/check');
+const errorHandler = require('./utils/errorHandler');
 
 (async () => {
   await connectionPool.init();
@@ -14,13 +14,10 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(indexRouter);
-app.use((err, req, res, next) => {
-  if (req.headersSent) {
-    return next(err);
-  }
-  return res
-    .status(err.statusCode || 500)
-    .json(pick(err, ['code', 'message', 'statusCode']));
-});
+app.use(errorHandler);
+
+app.all('*', (req, res) =>
+  res.status(404).json({ message: 'Not implemented' }),
+);
 
 module.exports = app;
