@@ -18,9 +18,10 @@ app.use((err, req, res, next) => {
   if (req.headersSent) {
     return next(err);
   }
-  return res
-    .status(err.statusCode || 500)
-    .json(pick(err, ['code', 'message', 'statusCode']));
+  return res.status(err.statusCode || 500).json(pick(err, ['code', 'message']));
 });
+app.all('*', (req, res) =>
+  res.status(404).json({ message: 'Not implemented' }),
+);
 
 module.exports = app;

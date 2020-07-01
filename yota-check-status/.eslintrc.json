@@ -2,9 +2,10 @@
   "env": {
     "commonjs": true,
     "es6": true,
+    "jest": true,
     "node": true
   },
-  "extends": ["prettier", "airbnb-base"],
+  "extends": ["airbnb-base", "prettier"],
   "plugins": ["prettier"],
   "ignorePatterns": ["bin/www", "data/connectionpool.js"],
   "globals": {
