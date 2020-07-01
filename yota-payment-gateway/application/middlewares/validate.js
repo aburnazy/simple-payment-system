@@ -4,7 +4,6 @@ const StatusError = require('../errors/StatusError');
 const { ERRORS, OPERATION_CODE } = require('../../common/constants');
 
 const validate = (req, res, next) => {
-  console.log('validating');
   const { msisdn, paymentDate, operationCode, paymentAmount } = get(
     req,
     'body',
@@ -38,7 +37,6 @@ const validate = (req, res, next) => {
   if (Number.isNaN(paymentAmount) || paymentAmount <= 0) {
     return next(new StatusError(ERRORS.INVALID_PAYMENT_AMOUNT));
   }
-  console.log('done validating');
   return next();
 };
 
