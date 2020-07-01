@@ -1,7 +1,6 @@
-
 /* Copyright (c) 2015, 2019, Oracle and/or its affiliates. All rights reserved. */
 
-/******************************************************************************
+/** ****************************************************************************
  *
  * You may not use the identified files except in compliance with the Apache
  * License, Version 2.0 (the "License.")
@@ -71,23 +70,24 @@
  *   with Oracle installed but the service name isn't known.
  *   Use 'lsnrctl services' on the database server to find available services
  *
- *****************************************************************************/
+ **************************************************************************** */
 
 module.exports = {
-    user          : process.env.NODE_ORACLEDB_USER || "yotaott",
+  user: process.env.NODE_ORACLEDB_USER || 'yotaott',
 
-    // Get the password from the environment variable
-    // NODE_ORACLEDB_PASSWORD.  The password could also be a hard coded
-    // string (not recommended), or it could be prompted for.
-    // Alternatively use External Authentication so that no password is
-    // needed.
-    password      : process.env.NODE_ORACLEDB_PASSWORD || 'yota0TT',
+  // Get the password from the environment variable
+  // NODE_ORACLEDB_PASSWORD.  The password could also be a hard coded
+  // string (not recommended), or it could be prompted for.
+  // Alternatively use External Authentication so that no password is
+  // needed.
+  password: process.env.NODE_ORACLEDB_PASSWORD || 'yota0TT',
 
-    // For information on connection strings see:
-    // https://oracle.github.io/node-oracledb/doc/api.html#connectionstrings
-    connectString : process.env.NODE_ORACLEDB_CONNECTIONSTRING || "localhost:49161/xe",
+  // For information on connection strings see:
+  // https://oracle.github.io/node-oracledb/doc/api.html#connectionstrings
+  connectString:
+    process.env.NODE_ORACLEDB_CONNECTIONSTRING || 'localhost:49161/xe',
 
-    // Setting externalAuth is optional.  It defaults to false.  See:
-    // https://oracle.github.io/node-oracledb/doc/api.html#extauth
-    externalAuth  : process.env.NODE_ORACLEDB_EXTERNALAUTH ? true : false
+  // Setting externalAuth is optional.  It defaults to false.  See:
+  // https://oracle.github.io/node-oracledb/doc/api.html#extauth
+  externalAuth: !!process.env.NODE_ORACLEDB_EXTERNALAUTH,
 };
