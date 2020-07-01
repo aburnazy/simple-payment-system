@@ -37,7 +37,7 @@ describe('Payment Routes', () => {
     expect(operation).toBe(1);
     expect(balance).toBeGreaterThanOrEqual(paymentAmount);
   });
-  test('Post payment - Inactive customer', async () => {
+  test('Post payment - Inactive Customer', async () => {
     const paymentAmount = 1000;
     const response = await request(app)
       .post('/payment')
