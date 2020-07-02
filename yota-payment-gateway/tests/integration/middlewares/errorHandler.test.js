@@ -1,8 +1,6 @@
 const StatusError = require('../../../application/errors/StatusError');
 const errorHandler = require('../../../application/middlewares/errorHandler');
 
-// const err = new StatusError({ message: 'test', statusCode: 400, code: 10 });
-
 describe('Error Handler Middleware', () => {
   test('Can handle if headers are sent', () => {
     const err = new Error('test');
