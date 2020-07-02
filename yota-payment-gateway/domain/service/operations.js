@@ -5,12 +5,12 @@ const { ERRORS } = require('../../common/constants');
 
 class Operations {
   static async payment(customerId, amount) {
-    const balanceEntity = await Operations.findCustomerById(customerId);
+    const balanceEntity = await Operations._findCustomerById(customerId);
     let updatedBalance;
 
     if (balanceEntity) {
       updatedBalance = balanceEntity.balance + amount;
-      const result = await Operations.updateBalanceById(
+      const result = await Operations._updateBalanceById(
         updatedBalance,
         balanceEntity.id,
       );
@@ -26,11 +26,11 @@ class Operations {
 
   static async withdraw(customerId, amount) {
     let updatedBalance;
-    const balanceEntity = await Operations.findCustomerById(customerId);
+    const balanceEntity = await Operations._findCustomerById(customerId);
 
     if (balanceEntity && balanceEntity.balance >= amount) {
       updatedBalance = balanceEntity.balance - amount;
-      const result = await Operations.updateBalanceById(
+      const result = await Operations._updateBalanceById(
         updatedBalance,
         balanceEntity.id,
       );
@@ -42,11 +42,11 @@ class Operations {
     return updatedBalance;
   }
 
-  static async findCustomerById(customerId) {
+  static async _findCustomerById(customerId) {
     return balanceRepository.findByCustomerId(customerId);
   }
 
-  static async updateBalanceById(balance, balanceId) {
+  static async _updateBalanceById(balance, balanceId) {
     return balanceRepository.updateBalanceById(balance, balanceId);
   }
 }
