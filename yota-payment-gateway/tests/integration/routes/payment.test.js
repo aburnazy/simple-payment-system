@@ -5,8 +5,10 @@ const checkStatusApp = require('../../../../yota-check-status/app');
 
 const ACTIVE_CUSTOMER = 37491782745;
 const INACTIVE_CUSTOMER = 37499009098;
+const NOT_EXISTING_CUSTOMER = 37499123456;
 const OPERATION_CODE_PAYMENT = 1;
 const OPERATION_CODE_WITHDRAWAL = 2;
+const date = new Date();
 let server;
 
 jest.setTimeout(20000);
@@ -25,7 +27,7 @@ describe('Payment Routes', () => {
       .post('/payment')
       .send({
         msisdn: ACTIVE_CUSTOMER,
-        paymentDate: new Date(),
+        paymentDate: date,
         operationCode: OPERATION_CODE_PAYMENT,
         paymentAmount,
       })
@@ -34,7 +36,7 @@ describe('Payment Routes', () => {
       body: { code, operation, balance },
     } = response;
     expect(code).toBe(0);
-    expect(operation).toBe(1);
+    expect(operation).toBe(OPERATION_CODE_PAYMENT);
     expect(balance).toBeGreaterThanOrEqual(paymentAmount);
   });
   test('Post payment - Inactive Customer', async () => {
@@ -43,7 +45,7 @@ describe('Payment Routes', () => {
       .post('/payment')
       .send({
         msisdn: INACTIVE_CUSTOMER,
-        paymentDate: new Date(),
+        paymentDate: date,
         operationCode: OPERATION_CODE_PAYMENT,
         paymentAmount,
       })
@@ -52,7 +54,7 @@ describe('Payment Routes', () => {
       body: { code, operation, balance },
     } = response;
     expect(code).toBe(0);
-    expect(operation).toBe(1);
+    expect(operation).toBe(OPERATION_CODE_PAYMENT);
     expect(balance).toBeFalsy();
   });
   test('Post payment - Not existing customer', async () => {
@@ -60,13 +62,75 @@ describe('Payment Routes', () => {
     const response = await request(app)
       .post('/payment')
       .send({
-        msisdn: 12345,
-        paymentDate: new Date(),
+        msisdn: NOT_EXISTING_CUSTOMER,
+        paymentDate: date,
         operationCode: OPERATION_CODE_PAYMENT,
         paymentAmount,
       })
       .expect(404);
     const { code } = response.body;
     expect(code).toBe(3);
+  });
+  test('Post withdraw - Active customer', async () => {
+    const paymentAmount = 100;
+    const response = await request(app)
+      .post('/payment')
+      .send({
+        msisdn: ACTIVE_CUSTOMER,
+        paymentDate: date,
+        operationCode: OPERATION_CODE_WITHDRAWAL,
+        paymentAmount,
+      })
+      .expect(200);
+    const {
+      body: { code, operation, balance },
+    } = response;
+    expect(code).toBe(0);
+    expect(operation).toBe(OPERATION_CODE_WITHDRAWAL);
+    expect(balance).toBeTruthy();
+  });
+  test('Post withdraw - Active customer - Insufficient funds', async () => {
+    const paymentAmount = 100000;
+    const response = await request(app)
+      .post('/payment')
+      .send({
+        msisdn: ACTIVE_CUSTOMER,
+        paymentDate: date,
+        operationCode: OPERATION_CODE_WITHDRAWAL,
+        paymentAmount,
+      })
+      .expect(402);
+    expect(response.body.code).toBe(6);
+  });
+  test('Post withdraw - Inactive customer', async () => {
+    const paymentAmount = 100;
+    const response = await request(app)
+      .post('/payment')
+      .send({
+        msisdn: INACTIVE_CUSTOMER,
+        paymentDate: date,
+        operationCode: OPERATION_CODE_WITHDRAWAL,
+        paymentAmount,
+      })
+      .expect(200);
+    const {
+      body: { code, operation, balance },
+    } = response;
+    expect(code).toBe(0);
+    expect(operation).toBe(OPERATION_CODE_WITHDRAWAL);
+    expect(balance).toBeFalsy();
+  });
+  test('Post withdraw - Not existing customer', async () => {
+    const paymentAmount = 1000;
+    const response = await request(app)
+      .post('/payment')
+      .send({
+        msisdn: NOT_EXISTING_CUSTOMER,
+        paymentDate: date,
+        operationCode: OPERATION_CODE_WITHDRAWAL,
+        paymentAmount,
+      })
+      .expect(404);
+    expect(response.body.code).toBe(3);
   });
 });

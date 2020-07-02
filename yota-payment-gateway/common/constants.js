@@ -41,7 +41,7 @@ const Constants = {
     INTERNAL_ERROR: {
       code: 8,
       statusCode: 500,
-      message: 'An internal error occured. Please try again later.',
+      message: 'An internal error occurred. Please try again later.',
     },
   },
 
