@@ -1,6 +1,7 @@
 const checkStatusService = require('../../infrastructure/http/check-status-service');
 const paymentRepository = require('../../infrastructure/db/payment-repository');
 const Payment = require('../model/payment');
+const PaymentOperation = require('../model/payment-operation');
 
 class PaymentService {
   static async processPayment(
@@ -21,7 +22,9 @@ class PaymentService {
     }
 
     if (customerId && checkStatusResp.status) {
-      newBalance = await operationProcessor(customerId, paymentAmount);
+      newBalance = await operationProcessor.process(
+        new PaymentOperation(customerId, paymentAmount),
+      );
       paymentSucceeded = true;
     }
 
