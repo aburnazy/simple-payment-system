@@ -1,9 +1,9 @@
 #IDE
-.idea
-*/.idea
+.idea/
+**/.idea/
 
 # node_modules
-*/node_modules/
+**/node_modules/
 
 # jest
-**/coverage
+**/coverage/
