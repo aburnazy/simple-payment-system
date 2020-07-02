@@ -1,7 +1,7 @@
 const StatusError = require('./StatusError');
 
 const handler = (err, req, res, next) => {
-  if (req.headersSent) {
+  if (res.headersSent) {
     return next(err);
   }
   if (err instanceof StatusError) {
