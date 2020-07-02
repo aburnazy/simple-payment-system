@@ -1,21 +1,26 @@
-const fetch =  require('node-fetch');
+const { get } = require('lodash');
+const axios = require('axios');
+const StatusError = require('../../application/errors/StatusError');
+const { ERRORS } = require('../../common/constants');
 
-const ERRORS = require('../../common/constants').ERRORS;
-
-const CHECK_STATUS_ENDPOINT = `http://${(process.env.YOTA_STATUS_CHECK_HOST || 'localhost')}:3000/check`;
+const HOST = process.env.YOTA_STATUS_CHECK_HOST || 'localhost';
+const CHECK_STATUS_ENDPOINT = `http://${HOST}:3000/check`;
 
 class CheckStatusService {
-    async check(msisdn) {
-        const checkStatusUrl = `${CHECK_STATUS_ENDPOINT}/${msisdn}`;
-        const statusResp = await fetch(checkStatusUrl);
-        const statusRespJson = await statusResp.json();
-
-        if(statusRespJson.statusCode && statusRespJson.statusCode == 404) {
-            throw ERRORS.NO_MSISDN_FOUND;
-        }
-
-        return statusRespJson;
+  static async check(msisdn) {
+    let response;
+    try {
+      response = await axios.get(`${CHECK_STATUS_ENDPOINT}/${msisdn}`);
+    } catch (err) {
+      const status = get(err, 'response.status');
+      if (status === 404) {
+        throw new StatusError(ERRORS.NO_MSISDN_FOUND);
+      }
+      throw new StatusError(ERRORS.INTERNAL_ERROR);
     }
+
+    return response.data;
+  }
 }
 
-module.exports = new CheckStatusService();
+module.exports = CheckStatusService;
