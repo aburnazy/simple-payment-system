@@ -43,6 +43,11 @@ const Constants = {
       statusCode: 500,
       message: 'An internal error occurred. Please try again later.',
     },
+    CLOSED_ACCOUNT: {
+      code: 9,
+      statusCode: 422,
+      message: 'Closed account can not receive payment.',
+    },
   },
 
   OPERATION_CODE: {
