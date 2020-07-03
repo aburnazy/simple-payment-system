@@ -4,17 +4,13 @@ const StatusError = require('../errors/StatusError');
 const { ERRORS, OPERATION_CODE } = require('../../common/constants');
 
 const validate = (req, res, next) => {
-  const { msisdn, paymentDate, operationCode, paymentAmount } = get(
-    req,
-    'body',
-    {},
-  );
+  const { msisdn, date, operation, sum } = get(req, 'body', {});
 
   if (
     msisdn === undefined ||
-    paymentAmount === undefined ||
-    paymentDate === undefined ||
-    operationCode === undefined
+    sum === undefined ||
+    date === undefined ||
+    operation === undefined
   ) {
     return next(new StatusError(ERRORS.REQUIRED_FIELD_MISSING));
   }
@@ -29,21 +25,18 @@ const validate = (req, res, next) => {
     return next(new StatusError(ERRORS.INVALID_MSISDN));
   }
 
-  if (
-    Number.isNaN(new Date(paymentDate).getTime()) ||
-    new Date(paymentDate) > new Date()
-  ) {
+  if (Number.isNaN(new Date(date).getTime()) || new Date(date) > new Date()) {
     return next(new StatusError(ERRORS.INVALID_DATE));
   }
 
   if (
-    operationCode !== OPERATION_CODE.PAYMENT &&
-    operationCode !== OPERATION_CODE.WITHDRAWAL
+    operation !== OPERATION_CODE.PAYMENT &&
+    operation !== OPERATION_CODE.WITHDRAWAL
   ) {
     return next(new StatusError(ERRORS.INVALID_OPERATION_CODE));
   }
 
-  if (Number.isNaN(Number(paymentAmount)) || paymentAmount <= 0) {
+  if (Number.isNaN(Number(sum)) || sum <= 0) {
     return next(new StatusError(ERRORS.INVALID_PAYMENT_AMOUNT));
   }
   return next();
