@@ -1,5 +1,5 @@
-const StatusError = require('../../utils/StatusError');
-const errorHandler = require('../../utils/errorHandler');
+const StatusError = require('../../../application/errors/StatusError');
+const errorHandler = require('../../../application/middlewares/errorHandler');
 
 describe('Error Handler Middleware', () => {
   test('Can handle if headers are sent', () => {
@@ -12,7 +12,7 @@ describe('Error Handler Middleware', () => {
     expect(next).toHaveBeenCalledWith(err);
   });
   test('Can handle StatusError', () => {
-    const errData = { message: 'test' };
+    const errData = { code: 8, message: 'test' };
     const err = new StatusError(errData);
     const jsonMockFunc = jest.fn();
     const statusMock = jest.fn(() => ({
@@ -38,6 +38,7 @@ describe('Error Handler Middleware', () => {
     errorHandler(err, {}, res, () => {});
     expect(statusMock).toHaveBeenCalledWith(500);
     expect(jsonMockFunc).toHaveBeenCalledWith({
+      code: 2,
       message: 'An internal error occurred. Please try again later.',
     });
   });

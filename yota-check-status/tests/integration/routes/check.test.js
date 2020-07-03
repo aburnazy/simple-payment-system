@@ -1,6 +1,6 @@
 const request = require('supertest');
-const connectionPool = require('../../data/connectionpool');
-const app = require('../../app');
+const connectionPool = require('../../../infrastructure/db/connectionpool');
+const app = require('../../../app');
 
 const ACTIVE_CUSTOMER = 37491782745;
 const INACTIVE_CUSTOMER = 37499009098;
@@ -11,6 +11,9 @@ jest.setTimeout(20000);
 describe('Check Route', () => {
   beforeAll(async () => {
     await connectionPool.init();
+  });
+  afterAll(async () => {
+    await connectionPool.closePool();
   });
   test('Can get customer - Active', async () => {
     const response = await request(app)

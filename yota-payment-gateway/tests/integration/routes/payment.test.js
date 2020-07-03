@@ -19,6 +19,7 @@ describe('Payment Routes', () => {
     server = await checkStatusApp.listen(3000);
   });
   afterAll(async () => {
+    await connectionPool.closePool();
     server.close();
   });
   test('Post payment - Active Customer', async () => {
