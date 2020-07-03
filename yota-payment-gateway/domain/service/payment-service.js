@@ -2,6 +2,8 @@ const checkStatusService = require('../../infrastructure/http/check-status-servi
 const paymentRepository = require('../../infrastructure/db/payment-repository');
 const Payment = require('../model/payment');
 const PaymentOperation = require('../model/payment-operation');
+const StatusError = require('../../application/errors/StatusError');
+const { ERRORS } = require('../../common/constants');
 
 class PaymentService {
   static async processPayment(
@@ -13,34 +15,37 @@ class PaymentService {
   ) {
     let newBalance;
     let paymentSucceeded = false;
-    let customerId;
 
-    const checkStatusResp = await checkStatusService.check(msisdn);
+    const { status, account: customerId } = await checkStatusService.check(
+      msisdn,
+    );
 
-    if (checkStatusResp.account) {
-      customerId = checkStatusResp.account;
+    if (!customerId) {
+      throw new StatusError(ERRORS.NO_MSISDN_FOUND);
     }
 
-    if (customerId && checkStatusResp.status) {
+    if (status) {
       newBalance = await operationProcessor.process(
         new PaymentOperation(customerId, paymentAmount),
       );
       paymentSucceeded = true;
     }
 
-    if (customerId) {
-      const paymentResult = await paymentRepository.create(
-        new Payment(
-          null,
-          new Date(paymentDate),
-          operationCode,
-          customerId,
-          paymentAmount,
-          paymentSucceeded,
-        ),
-      );
-      // eslint-disable-next-line no-console
-      console.log('Payment result: ', paymentResult);
+    const paymentResult = await paymentRepository.create(
+      new Payment(
+        null,
+        new Date(paymentDate),
+        operationCode,
+        customerId,
+        paymentAmount,
+        paymentSucceeded,
+      ),
+    );
+    // eslint-disable-next-line no-console
+    console.log('Payment result: ', paymentResult);
+
+    if (!status) {
+      throw new StatusError(ERRORS.CLOSED_ACCOUNT);
     }
     return newBalance;
   }
