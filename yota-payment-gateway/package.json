@@ -1,6 +1,7 @@
 {
   "name": "yota-payment-gateway",
-  "version": "0.0.0",
+  "version": "1.0.0",
+  "description": "Payment Gateway (PG) service developed as according to specification for the 'OTT platform development' contest",
   "private": true,
   "scripts": {
     "test": "jest",
@@ -16,7 +17,9 @@
     "google-libphonenumber": "^3.2.10",
     "lodash": "^4.17.15",
     "morgan": "~1.9.1",
-    "oracledb": "^5.0.0"
+    "oracledb": "^5.0.0",
+    "swagger-ui-express": "^4.1.4",
+    "yamljs": "^0.3.0"
   },
   "devDependencies": {
     "@types/jest": "^26.0.3",

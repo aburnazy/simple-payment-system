@@ -1,0 +1,156 @@
+openapi: 3.0.1
+info:
+  title: Payment Gateway
+  description: 'This is an implementation of Payment Gateway service developed as according to specification for the "OTT Platform Development" contest'
+  version: 1.0.0
+servers:
+  - url: http://localhost:3001
+tags:
+  - name: payment
+    description: Represents a payment operation for a customer identified by MSISDN
+paths:
+  /payment:
+    post:
+      tags:
+        - payment
+      summary: Add a new payment for the customer
+      operationId: addPayment
+      requestBody:
+        description: Payment operation that needs to be performed
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Payment'
+        required: true
+      responses:
+        200:
+          description: Payment succeeded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentSuccessResponse'
+        400:
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentErrorResponse'
+              examples:
+                REQUIRED_FIELD_MISSING:
+                  value:
+                    code: 1
+                    message: 'Required field is missing'
+                INVALID_MSISDN:
+                  value:
+                    code: 2
+                    message: 'Provided MSISDN number is not valid'
+                INVALID_DATE:
+                  value:
+                    code: 4
+                    message: 'The payment date should be specified in milliseconds and not be in the future'
+                INVALID_OPERATION_CODE:
+                  value:
+                    code: 5
+                    message: 'Invalid operationCode. Supported codes are 1 (Payment) and 2 (Withdrawal)'
+                INVALID_PAYMENT_AMOUNT:
+                  value:
+                    code: 7
+                    message: 'Payment amount is invalid.'
+        402:
+          description: Insufficient Funds
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentErrorResponse'
+              examples:
+                INSUFFICIENT_FUNDS:
+                  value:
+                    code: 6
+                    message: 'Insufficient funds for the withdrawal. Need to refill the account'
+        404:
+          description: Customer with given MSISDN is not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentErrorResponse'
+              examples:
+                NO_MSISDN_FOUND:
+                  value:
+                    code: 3
+                    message: 'No customers were found with this MSISDN'
+        422:
+          description: Attempted payment for a closed account
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentErrorResponse'
+              examples:
+                CLOSED_ACCOUNT:
+                  value:
+                    code: 9
+                    message: 'Closed account can not receive payment.'
+        500:
+          description: Internal error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentErrorResponse'
+              examples:
+                INTERNAL_ERROR:
+                  value:
+                    code: 8
+                    message: 'An internal error occurred. Please try again later.'
+      x-codegen-request-body-name: body
+
+components:
+  schemas:
+    Payment:
+      type: object
+      properties:
+        msisdn:
+          type: string
+        date:
+          type: integer
+          format: int64
+          description: 'Milliseconds since the UNIX epoch\: 1970-01-01 00\:00\:00 UTC'
+        operation:
+          type: integer
+          format: int32
+          description: Operation to be performed. Currently supported are PAYMENT=1 and WITHDRAW=2
+          enum:
+            - 1
+            - 2
+        sum:
+          type: number
+          format: float
+          exclusiveMinimum: true
+          minimum: 0
+    PaymentSuccessResponse:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+          description: For successful operations code=0 otherwise 1-9
+        operation:
+          type: integer
+          format: int32
+          enum:
+            - 1
+            - 2
+        balance:
+          type: number
+          format: float
+          description: Customers account balance after performing the operation
+          exclusiveMinimum: true
+          minimum: 0
+    PaymentErrorResponse:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+          description: For successful operations code=0 otherwise 1-9
+        message:
+          type: string
+          description: Error message, this field is present only when code > 0

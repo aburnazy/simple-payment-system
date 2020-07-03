@@ -1,0 +1,61 @@
+openapi: 3.0.1
+info:
+  title: Check Status
+  description: 'This is an implementation of Check Status service developed as according to specification for the "OTT Platform Development" contest'
+  version: 1.0.0
+servers:
+  - url: http://localhost:3000
+tags:
+  - name: "customer status"
+    description: Represents status of a customer identified by MSISDN
+paths:
+  /check/{msisdn}:
+    get:
+      tags:
+        - "customer status"
+      summary: Check the status for the customer
+      operationId: checkStatus
+      parameters:
+        - name: "msisdn"
+          in: "path"
+          description: "MSISDN of the customer to check the status"
+          required: true
+          schema:
+            type: "string"
+            format: "string"
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        404:
+          description: Customer not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        500:
+          description: Internal error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+components:
+  schemas:
+    SuccessResponse:
+      type: object
+      properties:
+        account:
+          type: integer
+          format: int32
+          description: ID of the customer
+        status:
+          type: boolean
+    ErrorResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          description: Error message
