@@ -27,9 +27,9 @@ describe('Payment Routes', () => {
       .post('/payment')
       .send({
         msisdn: ACTIVE_CUSTOMER,
-        paymentDate: date,
-        operationCode: OPERATION_CODE_PAYMENT,
-        paymentAmount,
+        date,
+        operation: OPERATION_CODE_PAYMENT,
+        sum: paymentAmount,
       })
       .expect(200);
     const {
@@ -45,9 +45,9 @@ describe('Payment Routes', () => {
       .post('/payment')
       .send({
         msisdn: INACTIVE_CUSTOMER,
-        paymentDate: date,
-        operationCode: OPERATION_CODE_PAYMENT,
-        paymentAmount,
+        date,
+        operation: OPERATION_CODE_PAYMENT,
+        sum: paymentAmount,
       })
       .expect(200);
     const {
@@ -63,9 +63,9 @@ describe('Payment Routes', () => {
       .post('/payment')
       .send({
         msisdn: NOT_EXISTING_CUSTOMER,
-        paymentDate: date,
-        operationCode: OPERATION_CODE_PAYMENT,
-        paymentAmount,
+        date,
+        operation: OPERATION_CODE_PAYMENT,
+        sum: paymentAmount,
       })
       .expect(404);
     const { code } = response.body;
@@ -77,9 +77,9 @@ describe('Payment Routes', () => {
       .post('/payment')
       .send({
         msisdn: ACTIVE_CUSTOMER,
-        paymentDate: date,
-        operationCode: OPERATION_CODE_WITHDRAWAL,
-        paymentAmount,
+        date,
+        operation: OPERATION_CODE_WITHDRAWAL,
+        sum: paymentAmount,
       })
       .expect(200);
     const {
@@ -95,9 +95,9 @@ describe('Payment Routes', () => {
       .post('/payment')
       .send({
         msisdn: ACTIVE_CUSTOMER,
-        paymentDate: date,
-        operationCode: OPERATION_CODE_WITHDRAWAL,
-        paymentAmount,
+        date,
+        operation: OPERATION_CODE_WITHDRAWAL,
+        sum: paymentAmount,
       })
       .expect(402);
     expect(response.body.code).toBe(6);
@@ -108,9 +108,9 @@ describe('Payment Routes', () => {
       .post('/payment')
       .send({
         msisdn: INACTIVE_CUSTOMER,
-        paymentDate: date,
-        operationCode: OPERATION_CODE_WITHDRAWAL,
-        paymentAmount,
+        date,
+        operation: OPERATION_CODE_WITHDRAWAL,
+        sum: paymentAmount,
       })
       .expect(200);
     const {
@@ -126,9 +126,9 @@ describe('Payment Routes', () => {
       .post('/payment')
       .send({
         msisdn: NOT_EXISTING_CUSTOMER,
-        paymentDate: date,
-        operationCode: OPERATION_CODE_WITHDRAWAL,
-        paymentAmount,
+        date,
+        operation: OPERATION_CODE_WITHDRAWAL,
+        sum: paymentAmount,
       })
       .expect(404);
     expect(response.body.code).toBe(3);

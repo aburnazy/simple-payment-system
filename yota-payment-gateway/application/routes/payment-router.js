@@ -6,18 +6,18 @@ const Payment = require('../../domain/service/payment');
 const PaymentService = require('../../domain/service/payment-service');
 
 router.post('/payment', validate, async (req, res, next) => {
-  const { msisdn, paymentDate, operationCode, paymentAmount } = req.body;
+  const { msisdn, date, operation, sum } = req.body;
   const operationProcessor =
-    operationCode === OPERATION_CODE.PAYMENT ? Payment : Withdraw;
+    operation === OPERATION_CODE.PAYMENT ? Payment : Withdraw;
   try {
     const newBalance = await PaymentService.processPayment(
       msisdn,
-      paymentDate,
+      date,
       operationProcessor,
-      operationCode,
-      paymentAmount,
+      operation,
+      sum,
     );
-    return res.json({ code: 0, operation: operationCode, balance: newBalance });
+    return res.json({ code: 0, operation, balance: newBalance });
   } catch (err) {
     next(err);
   }

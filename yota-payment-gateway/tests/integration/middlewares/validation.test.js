@@ -22,9 +22,9 @@ describe('Validation Middleware', () => {
     req = {
       body: {
         msisdn: VALID_MSISDN,
-        paymentAmount: VALID_PAYMENT_AMOUT,
-        paymentDate: VALID_DATE,
-        operationCode: VALID_OPERATION_CODE,
+        sum: VALID_PAYMENT_AMOUT,
+        date: VALID_DATE,
+        operation: VALID_OPERATION_CODE,
       },
     };
   });
@@ -42,31 +42,31 @@ describe('Validation Middleware', () => {
     expect(next).toHaveBeenCalledWith(new StatusError(ERRORS.INVALID_MSISDN));
   });
   test('Can Validate payment date - Future date', () => {
-    set(req, 'body.paymentDate', INVALID_DATE);
+    set(req, 'body.date', INVALID_DATE);
     ValidationMiddleware(req, {}, next);
     expect(next).toHaveBeenCalledWith(new StatusError(ERRORS.INVALID_DATE));
   });
   test('Can Validate payment date - Invalid date', () => {
-    set(req, 'body.paymentDate', 'notadate!');
+    set(req, 'body.date', 'notadate!');
     ValidationMiddleware(req, {}, next);
     expect(next).toHaveBeenCalledWith(new StatusError(ERRORS.INVALID_DATE));
   });
   test('Can Validate operation code - Invalid value', () => {
-    set(req, 'body.operationCode', INVALID_OPERATION_CODE);
+    set(req, 'body.operation', INVALID_OPERATION_CODE);
     ValidationMiddleware(req, {}, next);
     expect(next).toHaveBeenCalledWith(
       new StatusError(ERRORS.INVALID_OPERATION_CODE),
     );
   });
   test('Can Validate payment amount - Negative value', () => {
-    set(req, 'body.paymentAmount', NEGATIVE_PAYMENT_AMOUNT);
+    set(req, 'body.sum', NEGATIVE_PAYMENT_AMOUNT);
     ValidationMiddleware(req, {}, next);
     expect(next).toHaveBeenCalledWith(
       new StatusError(ERRORS.INVALID_PAYMENT_AMOUNT),
     );
   });
   test('Can Validate payment amount - String value', () => {
-    set(req, 'body.paymentAmount', INVALID_PAYMENT_AMOUT);
+    set(req, 'body.sum', INVALID_PAYMENT_AMOUT);
     ValidationMiddleware(req, {}, next);
     expect(next).toHaveBeenCalledWith(
       new StatusError(ERRORS.INVALID_PAYMENT_AMOUNT),
@@ -80,21 +80,21 @@ describe('Validation Middleware', () => {
     );
   });
   test('Can Validate fields existence - paymentAmount', () => {
-    set(req, 'body.paymentAmount', undefined);
+    set(req, 'body.sum', undefined);
     ValidationMiddleware(req, {}, next);
     expect(next).toHaveBeenCalledWith(
       new StatusError(ERRORS.REQUIRED_FIELD_MISSING),
     );
   });
   test('Can Validate fields existence - paymentDate', () => {
-    set(req, 'body.paymentDate', undefined);
+    set(req, 'body.date', undefined);
     ValidationMiddleware(req, {}, next);
     expect(next).toHaveBeenCalledWith(
       new StatusError(ERRORS.REQUIRED_FIELD_MISSING),
     );
   });
   test('Can Validate fields existence - operationCode', () => {
-    set(req, 'body.operationCode', undefined);
+    set(req, 'body.operation', undefined);
     ValidationMiddleware(req, {}, next);
     expect(next).toHaveBeenCalledWith(
       new StatusError(ERRORS.REQUIRED_FIELD_MISSING),
