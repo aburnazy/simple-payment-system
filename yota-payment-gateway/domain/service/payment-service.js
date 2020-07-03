@@ -1,15 +1,13 @@
-const balanceRepository = require('../../infrastructure/db/balance-repository');
-const Balance = require('../model/balance');
-
+const checkStatusService = require('../../infrastructure/http/check-status-service');
 const paymentRepository = require('../../infrastructure/db/payment-repository');
 const Payment = require('../model/payment');
-
-const checkStatusService = require('../../infrastructure/http/check-status-service');
+const PaymentOperation = require('../model/payment-operation');
 
 class PaymentService {
   static async processPayment(
     msisdn,
     paymentDate,
+    operationProcessor,
     operationCode,
     paymentAmount,
   ) {
@@ -23,23 +21,10 @@ class PaymentService {
       customerId = checkStatusResp.account;
     }
 
-    if (checkStatusResp.status) {
-      let balanceEntity = await balanceRepository.findByCustomerId(customerId);
-
-      if (balanceEntity) {
-        newBalance = balanceEntity.balance + paymentAmount;
-        const updateResult = await balanceRepository.updateBalanceById(
-          newBalance,
-          balanceEntity.id,
-        );
-        // eslint-disable-next-line no-console
-        console.log(updateResult);
-      } else {
-        newBalance = paymentAmount;
-        balanceEntity = new Balance(null, customerId, paymentAmount);
-        await balanceRepository.create(balanceEntity);
-      }
-
+    if (customerId && checkStatusResp.status) {
+      newBalance = await operationProcessor.process(
+        new PaymentOperation(customerId, paymentAmount),
+      );
       paymentSucceeded = true;
     }
 
@@ -55,11 +40,9 @@ class PaymentService {
         ),
       );
       // eslint-disable-next-line no-console
-      console.log(paymentResult);
+      console.log('Payment result: ', paymentResult);
     }
-    return {
-      newBalance,
-    };
+    return newBalance;
   }
 }
 

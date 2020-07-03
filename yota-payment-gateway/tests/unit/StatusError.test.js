@@ -9,6 +9,10 @@ describe('Status Error', () => {
   beforeAll(() => {
     statusError = new StatusError({ message, code, statusCode });
   });
+  test('StatusCode defaults to 500', () => {
+    const error = new StatusError({});
+    expect(error.statusCode).toBe(500);
+  });
   test('Sets message', () => {
     expect(statusError.message).toBe(message);
   });

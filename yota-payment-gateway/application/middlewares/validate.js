@@ -10,12 +10,21 @@ const validate = (req, res, next) => {
     {},
   );
 
-  if (!msisdn || !paymentAmount || !paymentDate || !operationCode) {
+  if (
+    msisdn === undefined ||
+    paymentAmount === undefined ||
+    paymentDate === undefined ||
+    operationCode === undefined
+  ) {
     return next(new StatusError(ERRORS.REQUIRED_FIELD_MISSING));
   }
 
+  let isValidMSISDN;
   try {
-    phoneUtil.isValidNumber(phoneUtil.parse(`+${msisdn}`));
+    isValidMSISDN = phoneUtil.isValidNumber(phoneUtil.parse(`+${msisdn}`));
+    if (!isValidMSISDN) {
+      return next(new StatusError(ERRORS.INVALID_MSISDN));
+    }
   } catch (e) {
     return next(new StatusError(ERRORS.INVALID_MSISDN));
   }
@@ -34,7 +43,7 @@ const validate = (req, res, next) => {
     return next(new StatusError(ERRORS.INVALID_OPERATION_CODE));
   }
 
-  if (Number.isNaN(paymentAmount) || paymentAmount <= 0) {
+  if (Number.isNaN(Number(paymentAmount)) || paymentAmount <= 0) {
     return next(new StatusError(ERRORS.INVALID_PAYMENT_AMOUNT));
   }
   return next();
