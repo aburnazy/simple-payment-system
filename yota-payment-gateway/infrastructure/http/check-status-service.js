@@ -2,9 +2,9 @@ const { get } = require('lodash');
 const axios = require('axios');
 const StatusError = require('../../application/errors/StatusError');
 const { ERRORS } = require('../../common/constants');
+const config = require('../../app.config');
 
-const HOST = process.env.YOTA_STATUS_CHECK_HOST || 'localhost';
-const CHECK_STATUS_ENDPOINT = `http://${HOST}:3000/check`;
+const CHECK_STATUS_ENDPOINT = `http://${config.checkStatusHost}:${config.checkStatusPort}/check`;
 
 class CheckStatusService {
   static async check(msisdn) {

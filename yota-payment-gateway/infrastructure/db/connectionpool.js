@@ -41,7 +41,7 @@
 // process.env.UV_THREADPOOL_SIZE = 4;
 
 const oracledb = require('oracledb');
-const dbConfig = require('./dbconfig.js');
+const dbConfig = require('../../app.config').dbConfig;
 
 class ConnectionPool {
   async init() {

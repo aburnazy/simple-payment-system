@@ -9,7 +9,6 @@ module.exports = {
     '<rootDir>/bin',
     '<rootDir>/coverage',
     '<rootDir>/infrastructure/db/connectionpool.js',
-    '<rootDir>/infrastructure/db/dbconfig.js',
     'jest.config.js',
     'prettier.config.js',
   ],
