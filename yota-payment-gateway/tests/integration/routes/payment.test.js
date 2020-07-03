@@ -49,13 +49,12 @@ describe('Payment Routes', () => {
         operation: OPERATION_CODE_PAYMENT,
         sum: paymentAmount,
       })
-      .expect(200);
+      .expect(422);
     const {
-      body: { code, operation, balance },
+      body: { code, message },
     } = response;
-    expect(code).toBe(0);
-    expect(operation).toBe(OPERATION_CODE_PAYMENT);
-    expect(balance).toBeFalsy();
+    expect(code).toBe(9);
+    expect(message).toBeTruthy();
   });
   test('Post payment - Not existing customer', async () => {
     const paymentAmount = 1000;
@@ -112,13 +111,12 @@ describe('Payment Routes', () => {
         operation: OPERATION_CODE_WITHDRAWAL,
         sum: paymentAmount,
       })
-      .expect(200);
+      .expect(422);
     const {
-      body: { code, operation, balance },
+      body: { code, message },
     } = response;
-    expect(code).toBe(0);
-    expect(operation).toBe(OPERATION_CODE_WITHDRAWAL);
-    expect(balance).toBeFalsy();
+    expect(code).toBe(9);
+    expect(message).toBeTruthy();
   });
   test('Post withdraw - Not existing customer', async () => {
     const paymentAmount = 1000;
