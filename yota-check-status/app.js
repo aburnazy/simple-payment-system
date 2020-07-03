@@ -1,8 +1,8 @@
 const express = require('express');
 const logger = require('morgan');
-const connectionPool = require('./data/connectionpool');
-const indexRouter = require('./routes/check');
-const errorHandler = require('./utils/errorHandler');
+const connectionPool = require('./infrastructure/db/connectionpool');
+const indexRouter = require('./application/routes/check');
+const errorHandler = require('./application/middlewares/errorHandler');
 
 (async () => {
   await connectionPool.init();

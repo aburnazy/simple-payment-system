@@ -74,6 +74,14 @@ class ConnectionPool {
     }
   }
 
+  async closePool() {
+    try {
+      await oracledb.getPool().close(1);
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
   async closePoolAndExit() {
     console.log('\nTerminating');
     try {
