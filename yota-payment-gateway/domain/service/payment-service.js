@@ -16,8 +16,6 @@ class PaymentService {
     let newBalance;
     let paymentSucceeded = false;
 
-    // account --> customerId
-    // status --> true/false (active/inactive)
     const { status, account: customerId } = await checkStatusService.check(
       msisdn,
     );
