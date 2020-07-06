@@ -1,5 +1,3 @@
-set serveroutput on
-
 -- Create user and set permissions
 create user yotaott identified by "yota0TT";
 

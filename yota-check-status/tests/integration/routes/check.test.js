@@ -2,8 +2,8 @@ const request = require('supertest');
 const connectionPool = require('../../../infrastructure/db/connectionpool');
 const app = require('../../../app');
 
-const ACTIVE_CUSTOMER = 37491782745;
-const INACTIVE_CUSTOMER = 37499009098;
+const ACTIVE_CUSTOMER = 37499001122;
+const INACTIVE_CUSTOMER = 37499334455;
 
 const getUrl = (param) => `/check/${param}`;
 jest.setTimeout(20000);

@@ -2,23 +2,23 @@
 
 ```shell script
 # build the oracle database image
-docker build  -t aburnazy/oracle-db-xe oracle-db/
+sudo docker build  -t dataart/oracle-db-xe oracle-db/
 
 #build the check status nodejs app image (http://localhost:3000/check)
-docker build  -t aburnazy/yota-sc yota-check-status/
+sudo docker build  -t dataart/yota-cs yota-check-status/
 
 #build the payment gateway nodejs app image (http://localhost:3001/payment)
-docker build  -t aburnazy/yota-gp yota-payment-gateway/
+sudo docker build  -t dataart/yota-pg yota-payment-gateway/
 
 #Run everything together
-docker-compose up
+sudo docker-compose up
 
 # Check the status of customer
-curl  http://localhost:3000/check/37491782745  -H "Content-Type: application/json"
+curl  http://localhost:3000/check/37499001122  -H "Content-Type: application/json"
 
 # Make payment for customer
 curl -X POST http://localhost:3001/payment \
  -H "Content-Type: application/json" \
--d '{"msisdn":"37491782745", "paymentAmount":1000, "operationCode": 1, "paymentDate": 1593525119470}'
+-d '{"msisdn":"37499001122", "sum":1000, "operation": 1, "date": 1593525119470}'
 ```
 

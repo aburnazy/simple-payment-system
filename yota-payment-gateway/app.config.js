@@ -10,6 +10,6 @@ module.exports = {
     externalAuth: !!process.env.NODE_ORACLEDB_EXTERNALAUTH,
   },
   application: {
-    acceptClosedAccountPayments: true,
+    acceptClosedAccountPayments: false,
   },
 };

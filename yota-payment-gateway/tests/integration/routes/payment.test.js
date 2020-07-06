@@ -5,8 +5,8 @@ const app = require('../../../app');
 const checkStatusApp = require('../../../../yota-check-status/app');
 const { checkStatusPort } = require('../../../app.config');
 
-const ACTIVE_CUSTOMER = 37491782745;
-const INACTIVE_CUSTOMER = 37499009098;
+const ACTIVE_CUSTOMER = 37499001122;
+const INACTIVE_CUSTOMER = 37499334455;
 const NOT_EXISTING_CUSTOMER = 37499123456;
 const OPERATION_CODE_PAYMENT = 1;
 const OPERATION_CODE_WITHDRAWAL = 2;

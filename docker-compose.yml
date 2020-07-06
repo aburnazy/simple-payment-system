@@ -1,7 +1,7 @@
 version: '3'
 services:
   oracledb:
-    image: aburnazy/oracle-db-xe
+    image: dataart/oracle-db-xe
     environment:
       - "ORACLE_ALLOW_REMOTE=true"
 #    volumes:
@@ -10,8 +10,8 @@ services:
       - 49161:1521
     networks:
       - mynet
-  sc:
-    image: aburnazy/yota-sc
+  cs:
+    image: dataart/yota-cs
     environment:
       - "NODE_ORACLEDB_USER=yotaott"
       - "NODE_ORACLEDB_PASSWORD=yota0TT"
@@ -22,20 +22,20 @@ services:
       - 3000:3000
     networks:
       - mynet    
-  gp:
-    image: aburnazy/yota-gp
+  pg:
+    image: dataart/yota-pg
     environment:
       - "NODE_ORACLEDB_USER=yotaott"
       - "NODE_ORACLEDB_PASSWORD=yota0TT"
       - "NODE_ORACLEDB_CONNECTIONSTRING=oracledb:1521/xe"    
-      - "YOTA_STATUS_CHECK_HOST=sc"  
+      - "YOTA_STATUS_CHECK_HOST=cs"
     depends_on: 
         - oracledb
     ports:
       - 3001:3001
     networks:
       - mynet
-      
+
 #volumes:
 #  data-oracledb:
 #    driver: local

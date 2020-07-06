@@ -2,8 +2,8 @@ const connectionPool = require('../../../infrastructure/db/connectionpool');
 const CustomerService = require('../../../domain/service/customer-service');
 const StatusError = require('../../../application/errors/StatusError');
 
-const ACTIVE_CUSTOMER = 37491782745;
-const INACTIVE_CUSTOMER = 37499009098;
+const ACTIVE_CUSTOMER = 37499001122;
+const INACTIVE_CUSTOMER = 37499334455;
 
 describe('Customer service', () => {
   beforeAll(async () => {

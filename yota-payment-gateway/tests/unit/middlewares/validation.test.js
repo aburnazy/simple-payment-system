@@ -3,7 +3,7 @@ const ValidationMiddleware = require('../../../application/middlewares/validate'
 const { ERRORS } = require('../../../common/constants');
 const StatusError = require('../../../application/errors/StatusError');
 
-const VALID_MSISDN = 37491782745;
+const VALID_MSISDN = 37499001122;
 const INVALID_MSISDN_NUMBER = 123;
 const INVALID_MSISDN_STRING = 'notavalidvalue!';
 const VALID_OPERATION_CODE = 1;
