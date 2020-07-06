@@ -1,6 +1,9 @@
 ## Installation
 
 ```shell script
+git clone https://github.com/aburnazy/simple-payment-system
+cd simple-payment-system
+
 # build the oracle database image
 sudo docker build  -t dataart/oracle-db-xe oracle-db/
 
