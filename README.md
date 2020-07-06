@@ -1,7 +1,7 @@
 ## Installation
 
 ```shell script
-git clone https://github.com/aburnazy/simple-payment-system
+git clone https://github.com/aburnazy/simple-payment-system.git
 cd simple-payment-system
 
 # build the oracle database image
