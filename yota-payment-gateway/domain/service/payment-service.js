@@ -1,9 +1,11 @@
+const { get } = require('lodash');
 const checkStatusService = require('../../infrastructure/http/check-status-service');
 const paymentRepository = require('../../infrastructure/db/payment-repository');
 const Payment = require('../model/payment');
 const PaymentOperation = require('../model/payment-operation');
 const StatusError = require('../../application/errors/StatusError');
 const { ERRORS } = require('../../common/constants');
+const config = require('../../app.config');
 
 class PaymentService {
   static async processPayment(
@@ -13,6 +15,11 @@ class PaymentService {
     operationCode,
     paymentAmount,
   ) {
+    const acceptClosedAccountPayments = get(
+      config,
+      'application.acceptClosedAccountPayments',
+      false,
+    );
     let newBalance;
     let paymentSucceeded = false;
 
@@ -24,7 +31,7 @@ class PaymentService {
       throw new StatusError(ERRORS.NO_MSISDN_FOUND);
     }
 
-    if (status) {
+    if (status || acceptClosedAccountPayments) {
       newBalance = await operationProcessor.process(
         new PaymentOperation(customerId, paymentAmount),
       );
@@ -44,7 +51,7 @@ class PaymentService {
     // eslint-disable-next-line no-console
     console.log('Payment result: ', paymentResult);
 
-    if (!status) {
+    if (!status && !acceptClosedAccountPayments) {
       throw new StatusError(ERRORS.CLOSED_ACCOUNT);
     }
     return newBalance;

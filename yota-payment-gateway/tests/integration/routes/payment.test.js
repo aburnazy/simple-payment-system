@@ -1,7 +1,9 @@
 const request = require('supertest');
 const connectionPool = require('../../../infrastructure/db/connectionpool');
+const config = require('../../../app.config');
 const app = require('../../../app');
 const checkStatusApp = require('../../../../yota-check-status/app');
+const { checkStatusPort } = require('../../../app.config');
 
 const ACTIVE_CUSTOMER = 37491782745;
 const INACTIVE_CUSTOMER = 37499009098;
@@ -13,16 +15,21 @@ let server;
 
 jest.setTimeout(20000);
 
+const acceptClosedAccountPayment = (value) => {
+  config.application.acceptClosedAccountPayments = value;
+};
+
 describe('Payment Routes', () => {
   beforeAll(async () => {
     await connectionPool.init();
-    server = await checkStatusApp.listen(3000);
+    server = await checkStatusApp.listen(checkStatusPort);
   });
   afterAll(async () => {
     await connectionPool.closePool();
     server.close();
   });
   test('Post payment - Active Customer', async () => {
+    acceptClosedAccountPayment(false);
     const paymentAmount = 1000;
     const response = await request(app)
       .post('/payment')
@@ -41,6 +48,7 @@ describe('Payment Routes', () => {
     expect(balance).toBeGreaterThanOrEqual(paymentAmount);
   });
   test('Post payment - Inactive Customer', async () => {
+    acceptClosedAccountPayment(false);
     const paymentAmount = 1000;
     const response = await request(app)
       .post('/payment')
@@ -58,6 +66,7 @@ describe('Payment Routes', () => {
     expect(message).toBeTruthy();
   });
   test('Post payment - Not existing customer', async () => {
+    acceptClosedAccountPayment(false);
     const paymentAmount = 1000;
     const response = await request(app)
       .post('/payment')
@@ -72,6 +81,7 @@ describe('Payment Routes', () => {
     expect(code).toBe(3);
   });
   test('Post withdraw - Active customer', async () => {
+    acceptClosedAccountPayment(false);
     const paymentAmount = 100;
     const response = await request(app)
       .post('/payment')
@@ -90,6 +100,7 @@ describe('Payment Routes', () => {
     expect(balance).toBeTruthy();
   });
   test('Post withdraw - Active customer - Insufficient funds', async () => {
+    acceptClosedAccountPayment(false);
     const paymentAmount = 100000;
     const response = await request(app)
       .post('/payment')
@@ -103,6 +114,7 @@ describe('Payment Routes', () => {
     expect(response.body.code).toBe(6);
   });
   test('Post withdraw - Inactive customer', async () => {
+    acceptClosedAccountPayment(false);
     const paymentAmount = 100;
     const response = await request(app)
       .post('/payment')
@@ -120,6 +132,7 @@ describe('Payment Routes', () => {
     expect(message).toBeTruthy();
   });
   test('Post withdraw - Not existing customer', async () => {
+    acceptClosedAccountPayment(false);
     const paymentAmount = 1000;
     const response = await request(app)
       .post('/payment')
@@ -131,5 +144,43 @@ describe('Payment Routes', () => {
       })
       .expect(404);
     expect(response.body.code).toBe(3);
+  });
+  test('Post payment - Inactive Customer - Payment - Accepting closed account', async () => {
+    acceptClosedAccountPayment(true);
+    const paymentAmount = 1000;
+    const response = await request(app)
+      .post('/payment')
+      .send({
+        msisdn: INACTIVE_CUSTOMER,
+        date,
+        operation: OPERATION_CODE_PAYMENT,
+        sum: paymentAmount,
+      })
+      .expect(200);
+    const {
+      body: { code, operation, balance },
+    } = response;
+    expect(code).toBe(0);
+    expect(operation).toBe(OPERATION_CODE_PAYMENT);
+    expect(balance).toBeTruthy();
+  });
+  test('Post payment - Inactive Customer - Withdraw - Accepting closed account', async () => {
+    acceptClosedAccountPayment(true);
+    const paymentAmount = 10;
+    const response = await request(app)
+      .post('/payment')
+      .send({
+        msisdn: INACTIVE_CUSTOMER,
+        date,
+        operation: OPERATION_CODE_WITHDRAWAL,
+        sum: paymentAmount,
+      })
+      .expect(200);
+    const {
+      body: { code, operation, balance },
+    } = response;
+    expect(code).toBe(0);
+    expect(operation).toBe(OPERATION_CODE_WITHDRAWAL);
+    expect(balance).toBeTruthy();
   });
 });
